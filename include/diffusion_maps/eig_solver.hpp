@@ -1,4 +1,3 @@
-#pragma once
 #ifndef DIFFUSION_MAPS_EIG_SOLVER_HPP
 #define DIFFUSION_MAPS_EIG_SOLVER_HPP
 
