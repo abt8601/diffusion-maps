@@ -1,4 +1,4 @@
-DEFAULT_PROFILE = RELEASE
+DEFAULT_PROFILE = DEBUG
 MOD_NAME = _diffusion_maps
 
 # Flags
