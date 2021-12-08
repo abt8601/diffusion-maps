@@ -1,14 +1,14 @@
-#include "diffusion_maps/eig_solver.hpp"
+#include "diffusion_maps/internal/eig_solver.hpp"
 
 #include <random>
 #include <stdexcept>
 
 std::optional<std::pair<double, diffusion_maps::Vector>>
-diffusion_maps::symmetric_power_method(const SparseMatrix &a,
-                                       const diffusion_maps::Vector &x0,
-                                       const double tol,
-                                       const unsigned max_iters,
-                                       const double epsilon) {
+diffusion_maps::internal::symmetric_power_method(const SparseMatrix &a,
+                                                 const Vector &x0,
+                                                 const double tol,
+                                                 const unsigned max_iters,
+                                                 const double epsilon) {
   if (a.n_rows() != a.n_cols()) { // a is not square.
     throw std::invalid_argument("matrix is not square");
   }
@@ -16,11 +16,11 @@ diffusion_maps::symmetric_power_method(const SparseMatrix &a,
     throw std::invalid_argument("incompatible dimensions");
   }
 
-  diffusion_maps::Vector x = x0 / x0.l2_norm();
+  Vector x = x0 / x0.l2_norm();
   double mu_0 = 0, mu_1 = 0;
 
   for (unsigned k = 0; k < max_iters; ++k) {
-    diffusion_maps::Vector y = a * x;
+    Vector y = a * x;
     const double mu = x.dot(y);
     const double denom = (mu - mu_1) - (mu_1 - mu_0);
     const double mu_hat = std::abs(denom) < epsilon
@@ -47,9 +47,9 @@ diffusion_maps::symmetric_power_method(const SparseMatrix &a,
 }
 
 std::vector<std::pair<double, diffusion_maps::Vector>>
-diffusion_maps::eigsh(const diffusion_maps::SparseMatrix &a, const unsigned k,
-                      const double tol, const unsigned max_iters,
-                      const unsigned max_restarts) {
+diffusion_maps::internal::eigsh(const SparseMatrix &a, const unsigned k,
+                                const double tol, const unsigned max_iters,
+                                const unsigned max_restarts) {
   if (a.n_rows() != a.n_cols()) { // a is not square.
     throw std::invalid_argument("matrix is not square");
   }
@@ -57,7 +57,7 @@ diffusion_maps::eigsh(const diffusion_maps::SparseMatrix &a, const unsigned k,
     throw std::invalid_argument("k cannot be larger than the number of rows");
   }
 
-  std::vector<std::pair<double, diffusion_maps::Vector>> eig_pairs;
+  std::vector<std::pair<double, Vector>> eig_pairs;
   eig_pairs.reserve(k);
 
   for (std::size_t i = 0; i < k; ++i) {
@@ -66,7 +66,7 @@ diffusion_maps::eigsh(const diffusion_maps::SparseMatrix &a, const unsigned k,
       //   x0 = (A - λᵢ₋₁ I) … (A - λ₁ I) (A - λ₀ I) x
       // where x is a random vector. (Annihilation technique.)
 
-      diffusion_maps::Vector x0(a.n_rows());
+      Vector x0(a.n_rows());
 
       std::default_random_engine gen;
       std::uniform_real_distribution<double> dist(0, 1);

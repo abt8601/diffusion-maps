@@ -3,11 +3,11 @@ MOD_NAME = _diffusion_maps
 
 # Flags
 
-CPPFLAGS_DEFAULT = -DNDEBUG
+CPPFLAGS_RELEASE = -DNDEBUG
 
-CXXFLAGS_BASE    = -std=c++17 -pedantic -Wall -Wextra -Werror -Iinclude $(shell python3-config --includes)
+CXXFLAGS_BASE    = -std=c++17 -pedantic -Wall -Wextra -Werror -Iinclude
 CXXFLAGS_DEBUG   = -g -fsanitize=address -fsanitize=undefined
-CXXFLAGS_DEFAULT = -O3 -funroll-loops -march=native
+CXXFLAGS_RELEASE = -O3 -funroll-loops -march=native
 
 LDLIBS_DEBUG = -lasan -lubsan
 
@@ -33,32 +33,29 @@ ASAN = $(shell ldd $(MOD) | awk '$$1 ~ /^libasan/ { print $$1 }')
 # Disable the leak sanitizer because CPython itself leaks memory.
 PYTEST_ASAN_ENV = LD_PRELOAD=$(ASAN) ASAN_OPTIONS=detect_leaks=0
 
-.PHONY: all cpptest pytest test clean-mod clean-profile clean
+.PHONY: all lib pymod cpptest pytest test clean-mod clean-profile clean
 
-all: $(MOD)
+all: lib pymod
 
-$(MOD): $(BUILD_DIR)/$(MOD)
-	cp $< $@
+lib: $(BUILD_DIR)/diffusion_maps.a
 
-$(BUILD_DIR)/$(MOD): $(BUILD_DIR)/diffusion_maps_pybind.o $(BUILD_DIR)/dummy.o $(BUILD_DIR)/eig_solver.o
-	$(CXX) $(LDFLAGS) $^ $(LDLIBS) -shared -o $@
+$(BUILD_DIR)/diffusion_maps.a: $(BUILD_DIR)/dummy.o $(BUILD_DIR)/diffusion_maps.o $(BUILD_DIR)/eig_solver.o
+	$(AR) $(ARFLAGS) $@ $^
 
-$(BUILD_DIR)/test_%: $(BUILD_DIR)/test_%.o $(BUILD_DIR)/eig_solver.o
-	$(CXX) $(LDFLAGS) $^ $(LDLIBS) $(TEST_LDLIBS) -o $@
+pymod: $(BUILD_DIR)/diffusion_maps.a
+	$(MAKE) -C pybind PROFILE=$(PROFILE)
+	cp pybind/build/$(PROFILE)/$(MOD) $(MOD)
 
 $(BUILD_DIR)/%.o: src/%.cpp | $(BUILD_DIR)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -fPIC -MMD -MF $(BUILD_DIR)/$*.d -o $@
-
-$(BUILD_DIR)/test_%.o: test/test_%.cpp | $(BUILD_DIR)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -fPIC -MMD -MF $(BUILD_DIR)/test_$*.d -o $@
 
 $(BUILD_DIR):
 	mkdir -p $(BUILD_DIR)
 
 test: cpptest pytest
 
-cpptest: $(TESTS)
-	for test in $(TESTS); do echo "Running $$test"; $$test; done
+cpptest: $(BUILD_DIR)/diffusion_maps.a
+	$(MAKE) -C test test PROFILE=$(PROFILE)
 
 pytest: $(MOD)
 	$(if $(findstring -lasan,$(LDLIBS)),$(PYTEST_ASAN_ENV)) python3 -m pytest
@@ -68,8 +65,12 @@ clean-mod:
 
 clean-profile:
 	$(RM) -r $(BUILD_DIR) $(MOD)
+	$(MAKE) -C pybind clean-profile PROFILE=$(PROFILE)
+	$(MAKE) -C test clean PROFILE=$(PROFILE)
 
 clean:
 	$(RM) -r build $(MOD)
+	$(MAKE) -C pybind clean PROFILE=$(PROFILE)
+	$(MAKE) -C test clean PROFILE=$(PROFILE)
 
 -include $(BUILD_DIR)/*.d

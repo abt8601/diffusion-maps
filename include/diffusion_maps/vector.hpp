@@ -320,15 +320,28 @@ public:
   }
 
   /**
+   * Get the squared 2-norm (Euclidean norm) of the vector.
+   * @return The squared 2-norm of the vector.
+   */
+  double sq_l2_norm() const { return dot(*this); }
+
+  /**
    * Get the 2-norm (Euclidean norm) of the vector.
    * @return The 2-norm of the vector.
    */
-  double l2_norm() const {
-    double result = 0;
-    for (std::size_t i = 0; i < _size; ++i)
-      result += _data[i] * _data[i];
+  double l2_norm() const { return std::sqrt(sq_l2_norm()); }
 
-    return std::sqrt(result);
+  /**
+   * Returns a vector where each element is the inverse square root of the
+   * corresponding element of this vector.
+   *
+   * @return The inverse square root of the vector.
+   */
+  Vector inv_sqrt() const {
+    Vector result(_size);
+    std::transform(_data.get(), _data.get() + _size, result._data.get(),
+                   [](double x) { return 1.0 / std::sqrt(x); });
+    return result;
   }
 };
 

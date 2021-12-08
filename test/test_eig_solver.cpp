@@ -5,7 +5,7 @@
 
 #include <criterion/criterion.h>
 
-#include "diffusion_maps/eig_solver.hpp"
+#include "diffusion_maps/internal/eig_solver.hpp"
 #include "diffusion_maps/sparse_matrix.hpp"
 #include "diffusion_maps/vector.hpp"
 
@@ -27,8 +27,8 @@ Test(eig_solver, symmetric_power_method_simple) {
   const double tol = 1e-10;
   const unsigned max_iters = 100;
 
-  const auto result =
-      diffusion_maps::symmetric_power_method(matrix, x0, tol, max_iters);
+  const auto result = diffusion_maps::internal::symmetric_power_method(
+      matrix, x0, tol, max_iters);
 
   cr_assert(result.has_value(), "Fail to converge");
 
@@ -68,7 +68,7 @@ Test(eig_solver, eigsh_simple) {
   const unsigned max_restarts = 3;
 
   const auto result =
-      diffusion_maps::eigsh(matrix, k, tol, max_iters, max_restarts);
+      diffusion_maps::internal::eigsh(matrix, k, tol, max_iters, max_restarts);
 
   cr_assert_eq(result.size(), k, "eigsh does not find all eigenvalues");
 

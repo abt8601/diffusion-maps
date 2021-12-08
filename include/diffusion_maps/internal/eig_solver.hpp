@@ -1,5 +1,5 @@
-#ifndef DIFFUSION_MAPS_EIG_SOLVER_HPP
-#define DIFFUSION_MAPS_EIG_SOLVER_HPP
+#ifndef DIFFUSION_MAPS_INTERNAL_EIG_SOLVER_HPP
+#define DIFFUSION_MAPS_INTERNAL_EIG_SOLVER_HPP
 
 #include <optional>
 #include <vector>
@@ -8,6 +8,8 @@
 #include "diffusion_maps/vector.hpp"
 
 namespace diffusion_maps {
+
+namespace internal {
 
 /**
  * Find the dominant eigenvalue and its corresponding eigenvector of a symmetric
@@ -47,6 +49,8 @@ symmetric_power_method(const SparseMatrix &a, const Vector &x0, double tol,
 std::vector<std::pair<double, Vector>> eigsh(const SparseMatrix &a, unsigned k,
                                              double tol, unsigned max_iters,
                                              unsigned max_restarts);
+
+} // namespace internal
 
 } // namespace diffusion_maps
 

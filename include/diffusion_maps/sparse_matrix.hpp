@@ -198,6 +198,30 @@ public:
    */
   std::size_t n_nz() const { return _row_ixs[_n_rows]; }
 
+  /**
+   * The data array.
+   * @return A pointer to the data array.
+   */
+  double *data() { return _data.get(); }
+
+  /**
+   * The data array.
+   * @return A pointer to the data array.
+   */
+  const double *data() const { return _data.get(); }
+
+  /**
+   * The column indices array.
+   * @return A pointer to the column indices array.
+   */
+  const std::size_t *col_ixs() const { return _col_ixs.get(); }
+
+  /**
+   * The row indices array.
+   * @return A pointer to the row indices array.
+   */
+  const std::size_t *row_ixs() const { return _row_ixs.get(); }
+
   // Matrix operations.
 
   /**
