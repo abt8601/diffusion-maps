@@ -24,6 +24,9 @@ namespace diffusion_maps {
  * @param eig_solver_max_restarts The maximum number of restarts of the
  * eigendecomposition solver.
  * @return The lower-dimensional embedding of the data in the diffusion space.
+ * @exception std::invalid_argument If @p n_components is greater than the
+ * number of data points minus 1.
+ * @exception std::invalid_argument If @p diffusion_time is negative.
  */
 std::pair<std::unique_ptr<double[]>, Matrix> diffusion_maps(
     const Matrix &data, std::size_t n_components,

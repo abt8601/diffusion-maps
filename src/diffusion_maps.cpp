@@ -71,6 +71,12 @@ diffusion_maps::diffusion_maps(
     const double eig_solver_tol, const unsigned eig_solver_max_iter,
     const unsigned eig_solver_max_restarts) {
   const std::size_t n_samples = data.n_rows();
+  if (n_components > n_samples - 1) {
+    throw std::invalid_argument("too many components");
+  }
+  if (diffusion_time < 0) {
+    throw std::invalid_argument("diffusion time must be non-negative");
+  }
 
   // Step 1: Compute the kernel matrix.
 
