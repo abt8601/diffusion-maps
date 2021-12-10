@@ -8,7 +8,6 @@
 #include "diffusion_maps/kernel.hpp"
 #include "diffusion_maps/matrix.hpp"
 #include "diffusion_maps/vector.hpp"
-#include "dummy.hpp"
 
 namespace py = pybind11;
 using namespace pybind11::literals;
@@ -43,7 +42,6 @@ static py::array_t<double> _diffusion_maps(
 }
 
 PYBIND11_MODULE(_diffusion_maps, m) {
-  m.def("dummy", &dummy);
   m.def("diffusion_maps", &_diffusion_maps);
 
   py::class_<diffusion_maps::Vector>(m, "Vector");

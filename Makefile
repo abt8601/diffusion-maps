@@ -39,12 +39,14 @@ all: lib pymod
 
 lib: $(BUILD_DIR)/diffusion_maps.a
 
-$(BUILD_DIR)/diffusion_maps.a: $(BUILD_DIR)/dummy.o $(BUILD_DIR)/diffusion_maps.o $(BUILD_DIR)/eig_solver.o
+$(BUILD_DIR)/diffusion_maps.a: $(BUILD_DIR)/diffusion_maps.o $(BUILD_DIR)/eig_solver.o
 	$(AR) $(ARFLAGS) $@ $^
 
-pymod: $(BUILD_DIR)/diffusion_maps.a
+pymod: $(MOD)
+
+$(MOD): $(BUILD_DIR)/diffusion_maps.a
 	$(MAKE) -C pybind PROFILE=$(PROFILE)
-	cp pybind/build/$(PROFILE)/$(MOD) $(MOD)
+	cp pybind/build/$(PROFILE)/$(MOD) $@
 
 $(BUILD_DIR)/%.o: src/%.cpp | $(BUILD_DIR)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -fPIC -MMD -MF $(BUILD_DIR)/$*.d -o $@

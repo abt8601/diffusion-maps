@@ -3,11 +3,19 @@ import numpy as np
 import _diffusion_maps
 
 
-def diffusion_maps(data: np.ndarray, n_components: int, kernel: str,
-                   diffusion_time: float, *, kernel_epsilon: float = 1e-6,
-                   eig_solver_tol: float = 1e-6,
-                   eig_solver_max_iter: int = 1000,
-                   eig_solver_max_restarts: int = 10, **kwargs) -> np.ndarray:
+default_kernel_epsilon = 1e-6
+default_eig_solver_tol = 1e-6
+default_eig_solver_max_iter = 10000
+default_eig_solver_max_restarts = 10
+
+
+def diffusion_maps(
+        data: np.ndarray, n_components: int, kernel: str, diffusion_time: float,
+        *, kernel_epsilon: float = default_kernel_epsilon,
+        eig_solver_tol: float = default_eig_solver_tol,
+        eig_solver_max_iter: int = default_eig_solver_max_iter,
+        eig_solver_max_restarts: int = default_eig_solver_max_restarts,
+        **kwargs) -> np.ndarray:
     # Check kernel.
     if kernel == 'gaussian':
         if 'gamma' in kwargs:
@@ -31,7 +39,3 @@ def diffusion_maps(data: np.ndarray, n_components: int, kernel: str,
                                           diffusion_time, kernel_epsilon,
                                           eig_solver_tol, eig_solver_max_iter,
                                           eig_solver_max_restarts)
-
-
-def dummy():
-    return _diffusion_maps.dummy()

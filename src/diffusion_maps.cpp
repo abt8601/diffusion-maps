@@ -96,17 +96,20 @@ diffusion_maps::diffusion_maps(
   // Step 4: Compute the diffusion maps.
 
   const std::size_t n_eigenvalues = eigenvalues.size();
-  Matrix::Buffer dm_buffer(n_samples, n_eigenvalues - 1);
+  Matrix::Buffer dm_buffer(n_samples,
+                           n_eigenvalues == 0 ? 0 : n_eigenvalues - 1);
   Matrix diffusion_maps(dm_buffer);
 
-  for (std::size_t i = 0; i < n_samples; ++i) {
-    for (std::size_t j = 0; j < n_eigenvalues - 1; ++j) {
-      // We drop the first eigenpair because the eigenvector is constant in all
-      // dimensions.
+  if (n_eigenvalues != 0) {
+    for (std::size_t i = 0; i < n_samples; ++i) {
+      for (std::size_t j = 0; j < n_eigenvalues - 1; ++j) {
+        // We drop the first eigenpair because the eigenvector is constant in
+        // all dimensions.
 
-      const double lambda = eigenvalues[j + 1];
-      const double psi_i = invsqrt_row_sum[i] * eigenvectors[j + 1][i];
-      diffusion_maps(i, j) = std::pow(lambda, diffusion_time) * psi_i;
+        const double lambda = eigenvalues[j + 1];
+        const double psi_i = invsqrt_row_sum[i] * eigenvectors[j + 1][i];
+        diffusion_maps(i, j) = std::pow(lambda, diffusion_time) * psi_i;
+      }
     }
   }
 

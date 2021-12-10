@@ -83,11 +83,11 @@ Test(eig_solver, eigsh_simple) {
     const diffusion_maps::Vector eigenvector = eigenvectors[i];
     const auto [expected_eigenvalue, expected_eigenvector] = expected_result[i];
     cr_assert_float_eq(eigenvalue, expected_eigenvalue, tol,
-                       "%z-th calculated eigenvalue %lf does not match "
+                       "%zu-th calculated eigenvalue %lf does not match "
                        "expected eigenvalue %lf",
                        i, eigenvalue, expected_eigenvalue);
     cr_assert_lt(std::min((eigenvector - expected_eigenvector).l2_norm(),
                           (eigenvector - (-expected_eigenvector)).l2_norm()),
-                 tol, "%z-th calculated eigenvector is incorrect", i);
+                 tol, "%zu-th calculated eigenvector is incorrect", i);
   }
 }

@@ -9,6 +9,11 @@
 
 namespace diffusion_maps {
 
+constexpr double DEFAULT_KERNEL_EPSILON = 1e-6;
+constexpr double DEFAULT_EIG_SOLVER_TOL = 1e-6;
+constexpr unsigned DEFAULT_EIG_SOLVER_MAX_ITER = 10000;
+constexpr unsigned DEFAULT_EIG_SOLVER_MAX_RESTARTS = 10;
+
 /**
  * Diffusion maps.
  *
@@ -31,9 +36,10 @@ namespace diffusion_maps {
 std::pair<std::unique_ptr<double[]>, Matrix> diffusion_maps(
     const Matrix &data, std::size_t n_components,
     const std::function<double(const Vector &, const Vector &)> &kernel,
-    double diffusion_time, double kernel_epsilon = 1e-6,
-    double eig_solver_tol = 1e-6, unsigned eig_solver_max_iter = 1000,
-    unsigned eig_solver_max_restarts = 10);
+    double diffusion_time, double kernel_epsilon = DEFAULT_KERNEL_EPSILON,
+    double eig_solver_tol = DEFAULT_EIG_SOLVER_TOL,
+    unsigned eig_solver_max_iter = DEFAULT_EIG_SOLVER_MAX_ITER,
+    unsigned eig_solver_max_restarts = DEFAULT_EIG_SOLVER_MAX_RESTARTS);
 
 } // namespace diffusion_maps
 
