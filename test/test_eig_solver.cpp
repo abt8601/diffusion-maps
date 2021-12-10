@@ -28,7 +28,7 @@ Test(eig_solver, symmetric_power_method_simple) {
   const unsigned max_iters = 100;
 
   const auto result = diffusion_maps::internal::symmetric_power_method(
-      matrix, x0, tol, max_iters);
+      matrix, x0, nullptr, 0, tol, max_iters);
 
   cr_assert(result.has_value(), "Fail to converge");
 
@@ -67,10 +67,11 @@ Test(eig_solver, eigsh_simple) {
   const unsigned max_iters = 100;
   const unsigned max_restarts = 3;
 
-  const auto result =
+  const auto [eigenvalues, eigenvectors] =
       diffusion_maps::internal::eigsh(matrix, k, tol, max_iters, max_restarts);
 
-  cr_assert_eq(result.size(), k, "eigsh does not find all eigenvalues");
+  cr_assert_eq(eigenvalues.size(), k, "eigsh does not find all eigenvalues");
+  cr_assert_eq(eigenvectors.size(), k, "eigsh does not find all eigenvectors");
 
   const std::vector<std::pair<double, diffusion_maps::Vector>> expected_result =
       {{6, diffusion_maps::Vector{1, -1, 1} / std::sqrt(3)},
@@ -78,14 +79,15 @@ Test(eig_solver, eigsh_simple) {
        {1, diffusion_maps::Vector{0, 1, 1} / std::sqrt(2)}};
 
   for (std::size_t i = 0; i < k; ++i) {
-    const auto [eigenvalue, eigenvector] = result[i];
+    const double eigenvalue = eigenvalues[i];
+    const diffusion_maps::Vector eigenvector = eigenvectors[i];
     const auto [expected_eigenvalue, expected_eigenvector] = expected_result[i];
-    cr_assert_float_eq(
-        eigenvalue, expected_eigenvalue, tol,
-        "Calculated eigenvalue %lf does not match expected eigenvalue %lf",
-        eigenvalue, expected_eigenvalue);
+    cr_assert_float_eq(eigenvalue, expected_eigenvalue, tol,
+                       "%z-th calculated eigenvalue %lf does not match "
+                       "expected eigenvalue %lf",
+                       i, eigenvalue, expected_eigenvalue);
     cr_assert_lt(std::min((eigenvector - expected_eigenvector).l2_norm(),
                           (eigenvector - (-expected_eigenvector)).l2_norm()),
-                 tol, "Calculated eigenvector is incorrect");
+                 tol, "%z-th calculated eigenvector is incorrect", i);
   }
 }

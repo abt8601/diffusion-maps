@@ -89,13 +89,13 @@ diffusion_maps::diffusion_maps(
 
   // Step 3: Compute the eigenvalues and eigenvectors of the diffusion matrix.
 
-  const auto eigen_pairs =
+  const auto [eigenvalues, eigenvectors] =
       internal::eigsh(kernel_matrix, n_components + 1, eig_solver_tol,
                       eig_solver_max_iter, eig_solver_max_restarts);
 
   // Step 4: Compute the diffusion maps.
 
-  const std::size_t n_eigenvalues = eigen_pairs.size();
+  const std::size_t n_eigenvalues = eigenvalues.size();
   Matrix::Buffer dm_buffer(n_samples, n_eigenvalues - 1);
   Matrix diffusion_maps(dm_buffer);
 
@@ -104,8 +104,8 @@ diffusion_maps::diffusion_maps(
       // We drop the first eigenpair because the eigenvector is constant in all
       // dimensions.
 
-      const double lambda = eigen_pairs[j + 1].first;
-      const double psi_i = invsqrt_row_sum[i] * eigen_pairs[j + 1].second[i];
+      const double lambda = eigenvalues[j + 1];
+      const double psi_i = invsqrt_row_sum[i] * eigenvectors[j + 1][i];
       diffusion_maps(i, j) = std::pow(lambda, diffusion_time) * psi_i;
     }
   }
