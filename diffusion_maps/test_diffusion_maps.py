@@ -4,6 +4,8 @@ import numpy as np
 
 
 def test_diffusion_maps_helix():
+    """Tests diffusion maps on a helix."""
+
     # Generate data.
 
     n_samples = 1000

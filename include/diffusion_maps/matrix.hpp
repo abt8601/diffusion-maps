@@ -42,7 +42,7 @@ public:
           n_cols(n_cols) {}
 
     /**
-     * Take the data array of the buffer.
+     * Takes the data array of the buffer.
      */
     std::unique_ptr<double[]> take() { return std::move(data); }
   };

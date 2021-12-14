@@ -1,3 +1,5 @@
+"""Diffusion maps."""
+
 import numpy as np
 
 import _diffusion_maps
@@ -16,6 +18,62 @@ def diffusion_maps(
         eig_solver_max_iter: int = default_eig_solver_max_iter,
         eig_solver_max_restarts: int = default_eig_solver_max_restarts,
         **kwargs) -> np.ndarray:
+    """Diffusion maps.
+
+    Parameters
+    ----------
+    data : np.ndarray
+        The data matrix where each row is a data point.
+    n_components : int
+        The dimension of the projected subspace.
+    kernel : {'gaussian'}
+        The kernel function.
+    diffusion_time : float
+        The diffusion time.
+    kernel_epsilon : float
+        The value below which the output of the kernel would be treated as zero.
+    eig_solver_tol : float
+        The tolerance of the eigendecomposition solver.
+    eig_solver_max_iter : int
+        The maximum number of iterations of the eigendecomposition solver.
+    eig_solver_max_restarts : int
+        The maximum number of restarts of the eigendecomposition solver.
+    kwargs : dict
+        The keyword arguments of the kernel function.
+
+    Returns
+    -------
+    np.ndarray
+        The lower-dimensional embedding of the data in the diffusion space.
+
+    Raises
+    ------
+    ValueError
+        If the data matrix is not a two-dimensional array.
+    ValueError
+        If n_components is negative or greater than the number of data points
+        minus 1.
+    ValueError
+        If the kernel is not supported.
+    ValueError
+        If the kernel parameters are not valid.
+    ValueError
+        If the diffusion time is negative.
+
+    Kernels
+    -------
+    The following kernels are supported:
+
+    - 'gaussian'
+      The kernel parameter (gamma or sigma) can be specified as a keyword
+      argument. If both are not specified, gamma defaults to 1 / n_features. If
+      both are specified, raise a ValueError.
+    """
+
+    # Check the dimensions.
+    if data.ndim != 2:
+        raise ValueError('data must be a 2D array')
+
     # Check kernel.
     if kernel == 'gaussian':
         if 'gamma' in kwargs:

@@ -63,8 +63,8 @@ symmetric_power_method(const SparseMatrix &a, const Vector &x0,
  * @return The dominant eigenvalues and their corresponding eigenvectors. If the
  * method fails to find all @p k eigenvalues and eigenvectors, it will return
  * less than @p k eigenvalues and eigenvectors.
- * @throws std::invalid_argument if @p a is not square.
- * @throws std::invalid_argument if @p k is greater than the number of rows in
+ * @exception std::invalid_argument If @p a is not square.
+ * @exception std::invalid_argument If @p k is greater than the number of rows in
  * @p a.
  */
 std::pair<std::vector<double>, std::vector<Vector>>

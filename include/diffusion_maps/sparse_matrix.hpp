@@ -56,8 +56,10 @@ public:
 
     /**
      * Less-than comparison operator. Compares the row and column indices.
+     *
      * @param other The other triple.
-     * @return True if this triple is less than the other triple.
+     * @return True if this triple is less than the other triple in the
+     * aforementioned order.
      */
     bool operator<(const Triple &other) const {
       return std::tie(row, col) < std::tie(other.row, other.col);
@@ -67,14 +69,15 @@ public:
   // Constructors.
 
   /**
-   * Default constructor. Construct an empty 0×0 matrix.
+   * Constructs an empty 0×0 matrix.
    */
   SparseMatrix()
       : _n_rows(0), _n_cols(0), _data(nullptr), _col_ixs(nullptr),
         _row_ixs(nullptr) {}
 
   /**
-   * Construct from a vector of triples.
+   * Constructs a sparse matrix from a vector of triples.
+   *
    * @param n_rows The number of rows.
    * @param n_cols The number of columns.
    * @param triples The vector of triples. Elements are sorted in-place.
@@ -101,6 +104,7 @@ public:
 
   /**
    * Copy constructor.
+   *
    * @param other The sparse matrix to copy.
    */
   SparseMatrix(const SparseMatrix &other)
@@ -115,6 +119,7 @@ public:
 
   /**
    * Move constructor. The moved-from matrix is set to an empty 0×0 matrix.
+   *
    * @param other The sparse matrix to move.
    */
   SparseMatrix(SparseMatrix &&other) noexcept
@@ -136,6 +141,7 @@ public:
 
   /**
    * Copy assignment operator.
+   *
    * @param other The sparse matrix to copy.
    * @return A reference to this sparse matrix.
    */
@@ -159,6 +165,7 @@ public:
   /**
    * Move assignment operator. The moved-from matrix is set to an empty 0×0
    * matrix.
+   *
    * @param other The sparse matrix to move.
    * @return A reference to this sparse matrix.
    */
@@ -181,44 +188,37 @@ public:
   // Accessors.
 
   /**
-   * Get the number of rows.
-   * @return The number of rows.
+   * The number of rows.
    */
   std::size_t n_rows() const { return _n_rows; }
 
   /**
-   * Get the number of columns.
-   * @return The number of columns.
+   * The number of columns.
    */
   std::size_t n_cols() const { return _n_cols; }
 
   /**
-   * Get the number of non-zero elements.
-   * @return The number of non-zero elements.
+   * The number of non-zero elements.
    */
   std::size_t n_nz() const { return _row_ixs[_n_rows]; }
 
   /**
    * The data array.
-   * @return A pointer to the data array.
    */
   double *data() { return _data.get(); }
 
   /**
    * The data array.
-   * @return A pointer to the data array.
    */
   const double *data() const { return _data.get(); }
 
   /**
    * The column indices array.
-   * @return A pointer to the column indices array.
    */
   const std::size_t *col_ixs() const { return _col_ixs.get(); }
 
   /**
    * The row indices array.
-   * @return A pointer to the row indices array.
    */
   const std::size_t *row_ixs() const { return _row_ixs.get(); }
 
@@ -226,9 +226,10 @@ public:
 
   /**
    * Matrix-vector multiplication.
+   *
    * @param v The vector to multiply.
    * @return The result of the multiplication.
-   * @throws std::invalid_argument if the dimensions are incompatible.
+   * @exception std::invalid_argument If the dimensions are incompatible.
    */
   Vector operator*(const Vector &v) const {
     if (_n_cols != v.size())

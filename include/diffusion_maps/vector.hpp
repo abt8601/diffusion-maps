@@ -16,11 +16,11 @@ namespace diffusion_maps {
 class Vector {
 protected:
   /**
-   * The size of the vector.
+   * The size.
    */
   std::size_t _size;
   /**
-   * The data array of the vector.
+   * The data array.
    */
   std::unique_ptr<double[]> _data;
 
@@ -28,19 +28,21 @@ public:
   // Constructors.
 
   /**
-   * Default constructor. Construct a vector of size 0.
+   * Constructs a vector of size 0.
    */
   Vector() : _size(0), _data(nullptr) {}
 
   /**
-   * Construct a vector of size @p size.
+   * Constructs a vector of size @p size.
+   *
    * @param size The size of the vector.
    */
   Vector(const std::size_t size)
       : _size(size), _data(std::make_unique<double[]>(_size)) {}
 
   /**
-   * Construct a vector of size @p size with each element set to @p value.
+   * Constructs a vector of size @p size with each element set to @p value.
+   *
    * @param size The size of the vector.
    * @param value The value of each element.
    */
@@ -50,7 +52,8 @@ public:
   }
 
   /**
-   * Construct a vector from an initializer list.
+   * Constructs a vector from an initializer list.
+   *
    * @param list The initializer list.
    */
   Vector(const std::initializer_list<double> list)
@@ -60,6 +63,7 @@ public:
 
   /**
    * Copy constructor.
+   *
    * @param other The vector to copy.
    */
   Vector(const Vector &other)
@@ -69,6 +73,7 @@ public:
 
   /**
    * Move constructor. The moved-from vector is set to a 0-sized vector.
+   *
    * @param other The vector to move.
    */
   Vector(Vector &&other) noexcept
@@ -87,6 +92,7 @@ public:
 
   /**
    * Copy assignment operator.
+   *
    * @param other The vector to copy.
    * @return A reference to this vector.
    */
@@ -103,6 +109,7 @@ public:
 
   /**
    * Move assignment operator. The moved-from vector is set to a 0-sized vector.
+   *
    * @param other The vector to move.
    * @return A reference to this vector.
    */
@@ -121,34 +128,33 @@ public:
   // Member access.
 
   /**
-   * Get the size of the vector.
-   * @return The size of the vector.
+   * The size of the vector.
    */
   std::size_t size() const noexcept { return _size; }
 
   /**
-   * Get the data array of the vector.
-   * @return The data array of the vector.
+   * The data array of the vector.
    */
   double *data() noexcept { return _data.get(); }
 
   /**
-   * Get the data array of the vector.
-   * @return The data array of the vector.
+   * The data array of the vector.
    */
   const double *data() const noexcept { return _data.get(); }
 
   // Element access.
 
   /**
-   * Get the element at index @p index without bounds checking.
+   * Gets the element at index @p index without bounds checking.
+   *
    * @param index The index of the element.
    * @return The element at index @p index.
    */
   double &operator[](const std::size_t index) { return _data[index]; }
 
   /**
-   * Get the element at index @p index without bounds checking.
+   * Gets the element at index @p index without bounds checking.
+   *
    * @param index The index of the element.
    * @return The element at index @p index.
    */
@@ -158,6 +164,7 @@ public:
 
   /**
    * Equality operator.
+   *
    * @param other The vector to compare with.
    * @return True if the vectors are equal, false otherwise.
    */
@@ -168,6 +175,7 @@ public:
 
   /**
    * Inequality operator.
+   *
    * @param other The vector to compare with.
    * @return True if the vectors are not equal, false otherwise.
    */
@@ -177,6 +185,7 @@ public:
 
   /**
    * Negation operator.
+   *
    * @return The negation of the vector.
    */
   Vector operator-() const {
@@ -188,9 +197,10 @@ public:
 
   /**
    * Addition operator.
+   *
    * @param other The vector to add.
    * @return The sum of the vectors.
-   * @throws std::invalid_argument if the vectors are not of the same size.
+   * @exception std::invalid_argument If the vectors are not of the same size.
    */
   Vector operator+(const Vector &other) const {
     if (_size != other._size)
@@ -205,9 +215,10 @@ public:
 
   /**
    * Addition assignment operator.
+   *
    * @param other The vector to add.
    * @return A reference to this vector.
-   * @throws std::invalid_argument if the vectors are not of the same size.
+   * @exception std::invalid_argument If the vectors are not of the same size.
    */
   Vector &operator+=(const Vector &other) {
     if (_size != other._size)
@@ -221,9 +232,10 @@ public:
 
   /**
    * Subtraction operator.
+   *
    * @param other The vector to subtract.
    * @return The difference of the vectors.
-   * @throws std::invalid_argument if the vectors are not of the same size.
+   * @exception std::invalid_argument If the vectors are not of the same size.
    */
   Vector operator-(const Vector &other) const {
     if (_size != other._size)
@@ -238,9 +250,10 @@ public:
 
   /**
    * Subtraction assignment operator.
+   *
    * @param other The vector to subtract.
    * @return A reference to this vector.
-   * @throws std::invalid_argument if the vectors are not of the same size.
+   * @exception std::invalid_argument If the vectors are not of the same size.
    */
   Vector &operator-=(const Vector &other) {
     if (_size != other._size)
@@ -254,6 +267,7 @@ public:
 
   /**
    * Scalar multiplication operator.
+   *
    * @param scalar The scalar to multiply by.
    * @return The scaled vector.
    */
@@ -267,6 +281,7 @@ public:
 
   /**
    * Scalar multiplication assignment operator.
+   *
    * @param scalar The scalar to multiply by.
    * @return A reference to this vector.
    */
@@ -279,6 +294,7 @@ public:
 
   /**
    * Scalar division operator.
+   *
    * @param scalar The scalar to divide by.
    * @return The scaled vector.
    */
@@ -292,6 +308,7 @@ public:
 
   /**
    * Scalar division assignment operator.
+   *
    * @param scalar The scalar to divide by.
    * @return A reference to this vector.
    */
@@ -304,9 +321,10 @@ public:
 
   /**
    * Dot product.
+   *
    * @param other The vector to dot with.
    * @return The dot product of the vectors.
-   * @throws std::invalid_argument if the vectors are not of the same size.
+   * @exception std::invalid_argument If the vectors are not of the same size.
    */
   double dot(const Vector &other) const {
     if (_size != other._size)
@@ -320,14 +338,12 @@ public:
   }
 
   /**
-   * Get the squared 2-norm (Euclidean norm) of the vector.
-   * @return The squared 2-norm of the vector.
+   * The squared 2-norm (Euclidean norm) of the vector.
    */
   double sq_l2_norm() const { return dot(*this); }
 
   /**
-   * Get the 2-norm (Euclidean norm) of the vector.
-   * @return The 2-norm of the vector.
+   * The 2-norm (Euclidean norm) of the vector.
    */
   double l2_norm() const { return std::sqrt(sq_l2_norm()); }
 
