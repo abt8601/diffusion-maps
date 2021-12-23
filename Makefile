@@ -25,7 +25,7 @@ TEST_LDLIBS = $(TEST_LDLIBS_BASE) $(TEST_LDLIBS_$(PROFILE))
 
 MOD = $(MOD_NAME)$(shell python3-config --extension-suffix)
 BUILD_DIR = build/$(PROFILE)
-TESTS := $(addprefix $(BUILD_DIR)/,$(basename $(notdir $(wildcard test/test_*))))
+TESTS := $(addprefix $(BUILD_DIR)/,$(basename $(notdir $(wildcard tests/test_*))))
 
 ASAN = $(shell ldd $(MOD) | awk '$$1 ~ /^libasan/ { print $$1 }')
 
@@ -57,7 +57,7 @@ $(BUILD_DIR):
 test: cpptest pytest
 
 cpptest: $(BUILD_DIR)/diffusion_maps.a
-	$(MAKE) -C test test PROFILE=$(PROFILE)
+	$(MAKE) -C tests test PROFILE=$(PROFILE)
 
 pytest: $(MOD)
 	$(if $(findstring -lasan,$(LDLIBS)),$(PYTEST_ASAN_ENV)) python3 -m pytest
@@ -68,11 +68,11 @@ clean-mod:
 clean-profile:
 	$(RM) -r $(BUILD_DIR) $(MOD)
 	$(MAKE) -C pybind clean-profile PROFILE=$(PROFILE)
-	$(MAKE) -C test clean PROFILE=$(PROFILE)
+	$(MAKE) -C tests clean PROFILE=$(PROFILE)
 
 clean:
 	$(RM) -r build $(MOD)
 	$(MAKE) -C pybind clean PROFILE=$(PROFILE)
-	$(MAKE) -C test clean PROFILE=$(PROFILE)
+	$(MAKE) -C tests clean PROFILE=$(PROFILE)
 
 -include $(BUILD_DIR)/*.d
