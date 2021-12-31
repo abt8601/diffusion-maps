@@ -63,8 +63,7 @@ static diffusion_maps::Vector compute_symmetrised_diffusion_matrix(
   return invsqrt_row_sum;
 }
 
-std::pair<std::unique_ptr<double[]>, diffusion_maps::Matrix>
-diffusion_maps::diffusion_maps(
+diffusion_maps::Matrix diffusion_maps::diffusion_maps(
     const Matrix &data, const std::size_t n_components,
     const std::function<double(const Vector &, const Vector &)> &kernel,
     const double diffusion_time, const double kernel_epsilon,
@@ -96,9 +95,7 @@ diffusion_maps::diffusion_maps(
   // Step 4: Compute the diffusion maps.
 
   const std::size_t n_eigenvalues = eigenvalues.size();
-  Matrix::Buffer dm_buffer(n_samples,
-                           n_eigenvalues == 0 ? 0 : n_eigenvalues - 1);
-  Matrix diffusion_maps(dm_buffer);
+  Matrix diffusion_maps(n_samples, n_eigenvalues == 0 ? 0 : n_eigenvalues - 1);
 
   if (n_eigenvalues != 0) {
     for (std::size_t i = 0; i < n_samples; ++i) {
@@ -113,5 +110,5 @@ diffusion_maps::diffusion_maps(
     }
   }
 
-  return std::make_pair(dm_buffer.take(), diffusion_maps);
+  return diffusion_maps;
 }

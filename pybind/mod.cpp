@@ -28,22 +28,20 @@ static py::array_t<double> _diffusion_maps(
       reinterpret_cast<double *>(info.ptr), info.shape[0], info.shape[1],
       info.strides[0] / sizeof(double), info.strides[1] / sizeof(double));
 
-  auto [dm_buffer, dm] = diffusion_maps::diffusion_maps(
+  auto result = diffusion_maps::diffusion_maps(
       data_matrix, n_components, kernel, diffusion_time, kernel_epsilon,
       eig_solver_tol, eig_solver_max_iter, eig_solver_max_restarts);
 
-  double *const dm_data = dm_buffer.release();
-  return py::array_t<double>(
-      {dm.n_rows(), dm.n_cols()},
-      {dm.row_stride() * sizeof(double), dm.col_stride() * sizeof(double)},
-      dm_data, py::capsule(dm_data, [](void *ptr) {
-        delete[] reinterpret_cast<double *>(ptr);
-      }));
+  return py::array_t<double>({result.n_rows(), result.n_cols()},
+                             {result.row_stride() * sizeof(double),
+                              result.col_stride() * sizeof(double)},
+                             result.data(), py::cast(&result));
 }
 
 PYBIND11_MODULE(_diffusion_maps, m) {
   m.def("diffusion_maps", &_diffusion_maps);
 
+  py::class_<diffusion_maps::Matrix>(m, "Matrix");
   py::class_<diffusion_maps::Vector>(m, "Vector");
 
   auto k = m.def_submodule("kernel");

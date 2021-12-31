@@ -33,7 +33,7 @@ constexpr unsigned DEFAULT_EIG_SOLVER_MAX_RESTARTS = 10;
  * number of data points minus 1.
  * @exception std::invalid_argument If @p diffusion_time is negative.
  */
-std::pair<std::unique_ptr<double[]>, Matrix> diffusion_maps(
+Matrix diffusion_maps(
     const Matrix &data, std::size_t n_components,
     const std::function<double(const Vector &, const Vector &)> &kernel,
     double diffusion_time, double kernel_epsilon = DEFAULT_KERNEL_EPSILON,

@@ -16,8 +16,7 @@ Test(diffusion_maps, diffusion_maps_helix) {
 
   // Generate data.
 
-  diffusion_maps::Matrix::Buffer helix_buffer(1000, 3);
-  diffusion_maps::Matrix helix(helix_buffer);
+  diffusion_maps::Matrix helix(1000, 3);
 
   for (std::size_t i = 0; i < 1000; ++i) {
     const double t = 8 * PI * (i / 999.);
@@ -31,7 +30,7 @@ Test(diffusion_maps, diffusion_maps_helix) {
 
   // Compute diffusion maps.
 
-  const auto [result_buffer, result] = diffusion_maps::diffusion_maps(
+  const auto result = diffusion_maps::diffusion_maps(
       helix, 1, diffusion_maps::kernel::Gaussian(50), 1);
 
   // Check the dimensions.
