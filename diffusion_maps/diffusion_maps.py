@@ -9,7 +9,7 @@ import _diffusion_maps
 
 default_kernel_epsilon = 1e-6
 default_eig_solver_tol = 1e-6
-default_eig_solver_max_iter = 10000
+default_eig_solver_max_iter = 100000
 
 
 def diffusion_maps(

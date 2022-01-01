@@ -22,7 +22,7 @@ Matrix diffusion_maps(
 
 constexpr double DEFAULT_KERNEL_EPSILON = 1e-6;
 constexpr double DEFAULT_EIG_SOLVER_TOL = 1e-6;
-constexpr unsigned DEFAULT_EIG_SOLVER_MAX_ITER = 10000;
+constexpr unsigned DEFAULT_EIG_SOLVER_MAX_ITER = 100000;
 
 /**
  * Diffusion maps.
