@@ -52,14 +52,15 @@ _diffusion_maps(const py::array_t<double> data, const std::size_t n_components,
 
   std::default_random_engine rng(rng_seed ? *rng_seed : std::random_device()());
 
-  auto result = diffusion_maps::diffusion_maps(
-      data_matrix, n_components, kernel.translate(), diffusion_time, rng,
-      kernel_epsilon, eig_solver_tol, eig_solver_max_iter);
+  diffusion_maps::Matrix *const result =
+      new diffusion_maps::Matrix(diffusion_maps::diffusion_maps(
+          data_matrix, n_components, kernel.translate(), diffusion_time, rng,
+          kernel_epsilon, eig_solver_tol, eig_solver_max_iter));
 
-  return py::array_t<double>({result.n_rows(), result.n_cols()},
-                             {result.row_stride() * sizeof(double),
-                              result.col_stride() * sizeof(double)},
-                             result.data(), py::cast(&result));
+  return py::array_t<double>({result->n_rows(), result->n_cols()},
+                             {result->row_stride() * sizeof(double),
+                              result->col_stride() * sizeof(double)},
+                             result->data(), py::cast(result));
 }
 
 PYBIND11_MODULE(_diffusion_maps, m) {
