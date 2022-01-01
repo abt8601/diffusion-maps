@@ -1,5 +1,6 @@
 #include <cmath>
 #include <functional>
+#include <random>
 
 #include <criterion/criterion.h>
 
@@ -30,8 +31,9 @@ Test(diffusion_maps, diffusion_maps_helix) {
 
   // Compute diffusion maps.
 
+  std::default_random_engine rng(std::random_device{}());
   const auto result = diffusion_maps::diffusion_maps(
-      helix, 1, diffusion_maps::kernel::Gaussian(50), 1);
+      helix, 1, diffusion_maps::kernel::Gaussian(50), 1, rng);
 
   // Check the dimensions.
 

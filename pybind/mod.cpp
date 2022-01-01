@@ -1,8 +1,10 @@
+#include <optional>
+#include <random>
 #include <stdexcept>
 
-#include "pybind11/functional.h"
 #include "pybind11/numpy.h"
 #include "pybind11/pybind11.h"
+#include "pybind11/stl.h"
 
 #include "diffusion_maps/diffusion_maps.hpp"
 #include "diffusion_maps/kernel.hpp"
@@ -36,6 +38,7 @@ public:
 static py::array_t<double>
 _diffusion_maps(const py::array_t<double> data, const std::size_t n_components,
                 const KernelBase &kernel, const double diffusion_time,
+                const std::optional<std::size_t> rng_seed,
                 const double kernel_epsilon, const double eig_solver_tol,
                 const unsigned eig_solver_max_iter) {
   const auto info = data.request();
@@ -47,8 +50,10 @@ _diffusion_maps(const py::array_t<double> data, const std::size_t n_components,
       reinterpret_cast<double *>(info.ptr), info.shape[0], info.shape[1],
       info.strides[0] / sizeof(double), info.strides[1] / sizeof(double));
 
+  std::default_random_engine rng(rng_seed ? *rng_seed : std::random_device()());
+
   auto result = diffusion_maps::diffusion_maps(
-      data_matrix, n_components, kernel.translate(), diffusion_time,
+      data_matrix, n_components, kernel.translate(), diffusion_time, rng,
       kernel_epsilon, eig_solver_tol, eig_solver_max_iter);
 
   return py::array_t<double>({result.n_rows(), result.n_cols()},

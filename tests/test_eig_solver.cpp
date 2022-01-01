@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <cmath>
 #include <optional>
+#include <random>
 #include <vector>
 
 #include <criterion/criterion.h>
@@ -66,8 +67,9 @@ Test(eig_solver, eigsh_simple) {
   const double tol = 1e-9;
   const unsigned max_iters = 100;
 
+  std::default_random_engine rng(std::random_device{}());
   const auto [eigenvalues, eigenvectors] =
-      diffusion_maps::internal::eigsh(matrix, k, tol, max_iters);
+      diffusion_maps::internal::eigsh(matrix, k, tol, max_iters, rng);
 
   cr_assert_eq(eigenvalues.size(), k, "eigsh does not find all eigenvalues");
   cr_assert_eq(eigenvectors.size(), k, "eigsh does not find all eigenvectors");

@@ -1,5 +1,7 @@
 """Diffusion maps."""
 
+from typing import Optional
+
 import numpy as np
 
 import _diffusion_maps
@@ -12,7 +14,8 @@ default_eig_solver_max_iter = 10000
 
 def diffusion_maps(
         data: np.ndarray, n_components: int, kernel: str, diffusion_time: float,
-        *, kernel_epsilon: float = default_kernel_epsilon,
+        *, rng_seed: Optional[int] = None,
+        kernel_epsilon: float = default_kernel_epsilon,
         eig_solver_tol: float = default_eig_solver_tol,
         eig_solver_max_iter: int = default_eig_solver_max_iter,
         **kwargs) -> np.ndarray:
@@ -28,6 +31,8 @@ def diffusion_maps(
         The kernel function.
     diffusion_time : float
         The diffusion time.
+    rng_seed : int, optional
+        The seed for the random number generator.
     kernel_epsilon : float
         The value below which the output of the kernel would be treated as zero.
     eig_solver_tol : float
@@ -90,5 +95,5 @@ def diffusion_maps(
         raise ValueError(f'unknown kernel: {kernel}')
 
     return _diffusion_maps.diffusion_maps(data, n_components, kernel_obj,
-                                          diffusion_time, kernel_epsilon,
+                                          diffusion_time, rng_seed, kernel_epsilon,
                                           eig_solver_tol, eig_solver_max_iter)

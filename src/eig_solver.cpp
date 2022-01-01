@@ -44,16 +44,14 @@ diffusion_maps::internal::symmetric_power_method(
 
 std::pair<std::vector<double>, std::vector<diffusion_maps::Vector>>
 diffusion_maps::internal::eigsh(const SparseMatrix &a, const unsigned k,
-                                const double tol, const unsigned max_iters) {
+                                const double tol, const unsigned max_iters,
+                                const std::function<double()> &rng) {
   if (a.n_rows() != a.n_cols()) { // a is not square.
     throw std::invalid_argument("matrix is not square");
   }
   if (k > a.n_rows()) { // k cannot be larger than the number of rows.
     throw std::invalid_argument("k cannot be larger than the number of rows");
   }
-
-  std::default_random_engine gen;
-  std::uniform_real_distribution<double> dist(0, 1);
 
   std::vector<double> eigenvalues;
   std::vector<Vector> eigenvectors;
@@ -65,7 +63,7 @@ diffusion_maps::internal::eigsh(const SparseMatrix &a, const unsigned k,
 
     Vector x0(a.n_rows());
     for (std::size_t i = 0; i < x0.size(); ++i) {
-      x0[i] = dist(gen);
+      x0[i] = rng();
     }
 
     // Use the symmetric power method to find the i-th eigenvalue and

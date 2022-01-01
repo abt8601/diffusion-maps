@@ -1,6 +1,7 @@
 #ifndef DIFFUSION_MAPS_INTERNAL_EIG_SOLVER_HPP
 #define DIFFUSION_MAPS_INTERNAL_EIG_SOLVER_HPP
 
+#include <functional>
 #include <optional>
 #include <vector>
 
@@ -59,6 +60,7 @@ symmetric_power_method(const SparseMatrix &a, const Vector &x0,
  * @param k The number of dominant eigenvalues to find.
  * @param tol The tolerance for the eigenvectors.
  * @param max_iters The maximum number of iterations to find each eigenvector.
+ * @param rng A function that generates a random number.
  * @return The dominant eigenvalues and their corresponding eigenvectors. If the
  * method fails to find all @p k eigenvalues and eigenvectors, it will return
  * less than @p k eigenvalues and eigenvectors.
@@ -67,7 +69,8 @@ symmetric_power_method(const SparseMatrix &a, const Vector &x0,
  * in @p a.
  */
 std::pair<std::vector<double>, std::vector<Vector>>
-eigsh(const SparseMatrix &a, unsigned k, double tol, unsigned max_iters);
+eigsh(const SparseMatrix &a, unsigned k, double tol, unsigned max_iters,
+      const std::function<double()> &rng);
 
 } // namespace internal
 

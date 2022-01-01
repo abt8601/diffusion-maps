@@ -63,11 +63,12 @@ static diffusion_maps::Vector compute_symmetrised_diffusion_matrix(
   return invsqrt_row_sum;
 }
 
-diffusion_maps::Matrix diffusion_maps::diffusion_maps(
+diffusion_maps::Matrix diffusion_maps::internal::diffusion_maps(
     const Matrix &data, const std::size_t n_components,
     const std::function<double(const Vector &, const Vector &)> &kernel,
     const double diffusion_time, const double kernel_epsilon,
-    const double eig_solver_tol, const unsigned eig_solver_max_iter) {
+    const double eig_solver_tol, const unsigned eig_solver_max_iter,
+    const std::function<double()> &rng) {
   const std::size_t n_samples = data.n_rows();
   if (n_components > n_samples - 1) {
     throw std::invalid_argument("too many components");
@@ -87,8 +88,9 @@ diffusion_maps::Matrix diffusion_maps::diffusion_maps(
 
   // Step 3: Compute the eigenvalues and eigenvectors of the diffusion matrix.
 
-  const auto [eigenvalues, eigenvectors] = internal::eigsh(
-      kernel_matrix, n_components + 1, eig_solver_tol, eig_solver_max_iter);
+  const auto [eigenvalues, eigenvectors] =
+      internal::eigsh(kernel_matrix, n_components + 1, eig_solver_tol,
+                      eig_solver_max_iter, rng);
 
   // Step 4: Compute the diffusion maps.
 
