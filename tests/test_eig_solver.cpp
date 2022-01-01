@@ -65,10 +65,9 @@ Test(eig_solver, eigsh_simple) {
   const unsigned k = 3;
   const double tol = 1e-9;
   const unsigned max_iters = 100;
-  const unsigned max_restarts = 3;
 
   const auto [eigenvalues, eigenvectors] =
-      diffusion_maps::internal::eigsh(matrix, k, tol, max_iters, max_restarts);
+      diffusion_maps::internal::eigsh(matrix, k, tol, max_iters);
 
   cr_assert_eq(eigenvalues.size(), k, "eigsh does not find all eigenvalues");
   cr_assert_eq(eigenvectors.size(), k, "eigsh does not find all eigenvectors");

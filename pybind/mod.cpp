@@ -37,8 +37,7 @@ static py::array_t<double>
 _diffusion_maps(const py::array_t<double> data, const std::size_t n_components,
                 const KernelBase &kernel, const double diffusion_time,
                 const double kernel_epsilon, const double eig_solver_tol,
-                const unsigned eig_solver_max_iter,
-                const unsigned eig_solver_max_restarts) {
+                const unsigned eig_solver_max_iter) {
   const auto info = data.request();
   if (info.ndim != 2) {
     throw std::runtime_error("data must be a 2D array");
@@ -50,8 +49,7 @@ _diffusion_maps(const py::array_t<double> data, const std::size_t n_components,
 
   auto result = diffusion_maps::diffusion_maps(
       data_matrix, n_components, kernel.translate(), diffusion_time,
-      kernel_epsilon, eig_solver_tol, eig_solver_max_iter,
-      eig_solver_max_restarts);
+      kernel_epsilon, eig_solver_tol, eig_solver_max_iter);
 
   return py::array_t<double>({result.n_rows(), result.n_cols()},
                              {result.row_stride() * sizeof(double),

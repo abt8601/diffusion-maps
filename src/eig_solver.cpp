@@ -44,8 +44,7 @@ diffusion_maps::internal::symmetric_power_method(
 
 std::pair<std::vector<double>, std::vector<diffusion_maps::Vector>>
 diffusion_maps::internal::eigsh(const SparseMatrix &a, const unsigned k,
-                                const double tol, const unsigned max_iters,
-                                const unsigned max_restarts) {
+                                const double tol, const unsigned max_iters) {
   if (a.n_rows() != a.n_cols()) { // a is not square.
     throw std::invalid_argument("matrix is not square");
   }
@@ -62,29 +61,26 @@ diffusion_maps::internal::eigsh(const SparseMatrix &a, const unsigned k,
   eigenvectors.reserve(k);
 
   for (std::size_t i = 0; i < k; ++i) {
-    for (unsigned restarts = 0; restarts < max_restarts; ++restarts) {
-      // Generate the initial guess for the eigenvector.
+    // Generate the initial guess for the eigenvector.
 
-      Vector x0(a.n_rows());
-      for (std::size_t i = 0; i < x0.size(); ++i) {
-        x0[i] = dist(gen);
-      }
+    Vector x0(a.n_rows());
+    for (std::size_t i = 0; i < x0.size(); ++i) {
+      x0[i] = dist(gen);
+    }
 
-      // Use the symmetric power method to find the i-th eigenvalue and
-      // eigenvector.
+    // Use the symmetric power method to find the i-th eigenvalue and
+    // eigenvector.
 
-      const auto eig_pair = symmetric_power_method(
-          a, x0, eigenvectors.data(), eigenvectors.size(), tol, max_iters);
+    const auto eig_pair = symmetric_power_method(
+        a, x0, eigenvectors.data(), eigenvectors.size(), tol, max_iters);
 
-      // Restart if the method does not converge or finds an eigenvalue 0.
-      if (!eig_pair.has_value() || eig_pair->first == 0) {
-        continue;
-      }
-
-      eigenvalues.push_back(eig_pair->first);
-      eigenvectors.push_back(eig_pair->second);
+    // Stop if the eigenvalue is not found.
+    if (!eig_pair) {
       break;
     }
+
+    eigenvalues.push_back(eig_pair->first);
+    eigenvectors.push_back(eig_pair->second);
   }
 
   return std::make_pair(eigenvalues, eigenvectors);

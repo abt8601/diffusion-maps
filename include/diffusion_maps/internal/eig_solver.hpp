@@ -59,17 +59,15 @@ symmetric_power_method(const SparseMatrix &a, const Vector &x0,
  * @param k The number of dominant eigenvalues to find.
  * @param tol The tolerance for the eigenvectors.
  * @param max_iters The maximum number of iterations to find each eigenvector.
- * @param max_restarts The maximum number of restarts.
  * @return The dominant eigenvalues and their corresponding eigenvectors. If the
  * method fails to find all @p k eigenvalues and eigenvectors, it will return
  * less than @p k eigenvalues and eigenvectors.
  * @exception std::invalid_argument If @p a is not square.
- * @exception std::invalid_argument If @p k is greater than the number of rows in
- * @p a.
+ * @exception std::invalid_argument If @p k is greater than the number of rows
+ * in @p a.
  */
 std::pair<std::vector<double>, std::vector<Vector>>
-eigsh(const SparseMatrix &a, unsigned k, double tol, unsigned max_iters,
-      unsigned max_restarts);
+eigsh(const SparseMatrix &a, unsigned k, double tol, unsigned max_iters);
 
 } // namespace internal
 

@@ -8,7 +8,6 @@ import _diffusion_maps
 default_kernel_epsilon = 1e-6
 default_eig_solver_tol = 1e-6
 default_eig_solver_max_iter = 10000
-default_eig_solver_max_restarts = 10
 
 
 def diffusion_maps(
@@ -16,7 +15,6 @@ def diffusion_maps(
         *, kernel_epsilon: float = default_kernel_epsilon,
         eig_solver_tol: float = default_eig_solver_tol,
         eig_solver_max_iter: int = default_eig_solver_max_iter,
-        eig_solver_max_restarts: int = default_eig_solver_max_restarts,
         **kwargs) -> np.ndarray:
     """Diffusion maps.
 
@@ -36,8 +34,6 @@ def diffusion_maps(
         The tolerance of the eigendecomposition solver.
     eig_solver_max_iter : int
         The maximum number of iterations of the eigendecomposition solver.
-    eig_solver_max_restarts : int
-        The maximum number of restarts of the eigendecomposition solver.
     kwargs : dict
         The keyword arguments of the kernel function.
 
@@ -95,5 +91,4 @@ def diffusion_maps(
 
     return _diffusion_maps.diffusion_maps(data, n_components, kernel_obj,
                                           diffusion_time, kernel_epsilon,
-                                          eig_solver_tol, eig_solver_max_iter,
-                                          eig_solver_max_restarts)
+                                          eig_solver_tol, eig_solver_max_iter)

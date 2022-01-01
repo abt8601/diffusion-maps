@@ -12,7 +12,6 @@ namespace diffusion_maps {
 constexpr double DEFAULT_KERNEL_EPSILON = 1e-6;
 constexpr double DEFAULT_EIG_SOLVER_TOL = 1e-6;
 constexpr unsigned DEFAULT_EIG_SOLVER_MAX_ITER = 10000;
-constexpr unsigned DEFAULT_EIG_SOLVER_MAX_RESTARTS = 10;
 
 /**
  * Diffusion maps.
@@ -26,8 +25,6 @@ constexpr unsigned DEFAULT_EIG_SOLVER_MAX_RESTARTS = 10;
  * @param eig_solver_tol The tolerance of the eigendecomposition solver.
  * @param eig_solver_max_iter The maximum number of iterations of the
  * eigendecomposition solver.
- * @param eig_solver_max_restarts The maximum number of restarts of the
- * eigendecomposition solver.
  * @return The lower-dimensional embedding of the data in the diffusion space.
  * @exception std::invalid_argument If @p n_components is greater than the
  * number of data points minus 1.
@@ -38,8 +35,7 @@ Matrix diffusion_maps(
     const std::function<double(const Vector &, const Vector &)> &kernel,
     double diffusion_time, double kernel_epsilon = DEFAULT_KERNEL_EPSILON,
     double eig_solver_tol = DEFAULT_EIG_SOLVER_TOL,
-    unsigned eig_solver_max_iter = DEFAULT_EIG_SOLVER_MAX_ITER,
-    unsigned eig_solver_max_restarts = DEFAULT_EIG_SOLVER_MAX_RESTARTS);
+    unsigned eig_solver_max_iter = DEFAULT_EIG_SOLVER_MAX_ITER);
 
 } // namespace diffusion_maps
 
