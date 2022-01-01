@@ -7,11 +7,11 @@ CPPFLAGS_RELEASE = -DNDEBUG
 
 CXXFLAGS_BASE    = -std=c++17 -pedantic -Wall -Wextra -Werror -Iinclude
 CXXFLAGS_DEBUG   = -g -fsanitize=address -fsanitize=undefined
+CXXFLAGS_TEST    = $(CXXFLAGS_DEBUG) -Og
 CXXFLAGS_RELEASE = -O3 -funroll-loops -march=native
 
 LDLIBS_DEBUG = -lasan -lubsan
-
-TEST_LDLIBS_BASE = -lcriterion
+LDLIBS_TEST  = $(LDLIBS_DEBUG)
 
 # ------------------------------------------------------------------------------
 
@@ -20,8 +20,6 @@ PROFILE = $(DEFAULT_PROFILE)
 CPPFLAGS = $(CPPFLAGS_BASE) $(CPPFLAGS_$(PROFILE))
 CXXFLAGS = $(CXXFLAGS_BASE) $(CXXFLAGS_$(PROFILE))
 LDLIBS   = $(LDLIBS_BASE) $(LDLIBS_$(PROFILE))
-
-TEST_LDLIBS = $(TEST_LDLIBS_BASE) $(TEST_LDLIBS_$(PROFILE))
 
 MOD = $(MOD_NAME)$(shell python3-config --extension-suffix)
 BUILD_DIR = build/$(PROFILE)
