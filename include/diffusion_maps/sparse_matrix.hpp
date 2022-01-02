@@ -237,10 +237,13 @@ public:
 
     Vector result(_n_rows);
 
+#pragma omp parallel for
     for (std::size_t i = 0; i < _n_rows; ++i) {
+      double sum = 0;
       for (std::size_t j = _row_ixs[i]; j < _row_ixs[i + 1]; ++j) {
-        result[i] += _data[j] * v[_col_ixs[j]];
+        sum += _data[j] * v[_col_ixs[j]];
       }
+      result[i] = sum;
     }
 
     return result;

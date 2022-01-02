@@ -4,11 +4,12 @@ MOD_NAME = _diffusion_maps
 
 CPPFLAGS_RELEASE = -DNDEBUG
 
-CXXFLAGS_BASE    = -std=c++17 -pedantic -Wall -Wextra -Werror -I../include $(shell python3-config --includes)
+CXXFLAGS_BASE    = -std=c++17 -pedantic -Wall -Wextra -Werror -I../include $(shell python3-config --includes) -fopenmp
 CXXFLAGS_DEBUG   = -g -fsanitize=address -fsanitize=undefined
 CXXFLAGS_TEST    = $(CXXFLAGS_DEBUG) -Og
 CXXFLAGS_RELEASE = -O3 -funroll-loops -march=native
 
+LDLIBS_BASE  = -lgomp
 LDLIBS_DEBUG = -lasan -lubsan
 LDLIBS_TEST  = $(LDLIBS_DEBUG)
 
