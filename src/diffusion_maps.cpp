@@ -22,7 +22,7 @@ static diffusion_maps::SparseMatrix compute_kernel_matrix(
   const std::size_t n_samples = data.n_rows();
   std::vector<diffusion_maps::SparseMatrix::Triple> triples;
 
-#pragma omp parallel for collapse(2)
+#pragma omp parallel for
   for (std::size_t i = 0; i < n_samples; ++i) {
     for (std::size_t j = i; j < n_samples; ++j) {
       const double value = kernel(data.row(i), data.row(j));
