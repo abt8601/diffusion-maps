@@ -1,7 +1,7 @@
 # Flags
 
-CXXFLAGS = -std=c++17 -pedantic -Wall -Wextra -Werror -I../include -g -fsanitize=address -fsanitize=undefined -Og
-LDLIBS   = -lasan -lubsan -lcriterion
+CXXFLAGS = -std=c++17 -pedantic -Wall -Wextra -Werror -I../include -g -fsanitize=address -fsanitize=undefined -Og -fopenmp
+LDLIBS   = -lasan -lubsan -lgomp -lcriterion
 
 # ------------------------------------------------------------------------------
 
