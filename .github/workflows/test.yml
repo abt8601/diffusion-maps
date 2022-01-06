@@ -24,7 +24,7 @@ jobs:
       - name: Build module
         run: |
           make PROFILE=TEST
-          make PROFILE=TEST_PAR
+          make PROFILE=RELEASE
 
       - name: Test
         run: LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib make test
