@@ -1,4 +1,4 @@
-from .diffusion_maps import diffusion_maps
+from diffusion_maps import diffusion_maps
 
 import numpy as np
 

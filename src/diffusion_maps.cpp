@@ -22,12 +22,16 @@ static diffusion_maps::SparseMatrix compute_kernel_matrix(
   const std::size_t n_samples = data.n_rows();
   std::vector<diffusion_maps::SparseMatrix::Triple> triples;
 
+#ifdef PAR
 #pragma omp parallel for
+#endif
   for (std::size_t i = 0; i < n_samples; ++i) {
     for (std::size_t j = i; j < n_samples; ++j) {
       const double value = kernel(data.row(i), data.row(j));
       if (std::abs(value) > epsilon) {
+#ifdef PAR
 #pragma omp critical
+#endif
         {
           triples.push_back({i, j, value});
           if (i != j) {
@@ -54,7 +58,9 @@ static diffusion_maps::Vector compute_symmetrised_diffusion_matrix(
       (kernel_matrix * diffusion_maps::Vector(kernel_matrix.n_rows(), 1))
           .inv_sqrt();
 
+#ifdef PAR
 #pragma omp parallel for
+#endif
   for (std::size_t i = 0; i < kernel_matrix.n_rows(); ++i) {
     for (std::size_t ir = kernel_matrix.row_ixs()[i];
          ir < kernel_matrix.row_ixs()[i + 1]; ++ir) {

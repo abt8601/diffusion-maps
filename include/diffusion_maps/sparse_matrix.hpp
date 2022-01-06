@@ -237,7 +237,9 @@ public:
 
     Vector result(_n_rows);
 
+#ifdef PAR
 #pragma omp parallel for
+#endif
     for (std::size_t i = 0; i < _n_rows; ++i) {
       double sum = 0;
       for (std::size_t j = _row_ixs[i]; j < _row_ixs[i + 1]; ++j) {

@@ -1,77 +1,37 @@
 DEFAULT_PROFILE = DEBUG
-MOD_NAME = _diffusion_maps
+PROFILE         = $(DEFAULT_PROFILE)
 
-# Flags
+TSAN = $(shell ldconfig -p | awk '$$1 ~ /^libtsan/ { print $$1 }')
+PAR_TEST_ENV = LD_PRELOAD=$(TSAN) OMP_NUM_THREADS=2
 
-CPPFLAGS_RELEASE = -DNDEBUG
-
-CXXFLAGS_BASE    = -std=c++17 -pedantic -Wall -Wextra -Werror -Iinclude -fopenmp
-CXXFLAGS_DEBUG   = -g -fsanitize=address -fsanitize=undefined
-CXXFLAGS_TEST    = $(CXXFLAGS_DEBUG) -Og
-CXXFLAGS_RELEASE = -O3 -funroll-loops -march=native
-
-LDLIBS_BASE  = -lgomp
-LDLIBS_DEBUG = -lasan -lubsan
-LDLIBS_TEST  = $(LDLIBS_DEBUG)
-
-# ------------------------------------------------------------------------------
-
-PROFILE = $(DEFAULT_PROFILE)
-
-CPPFLAGS = $(CPPFLAGS_BASE) $(CPPFLAGS_$(PROFILE))
-CXXFLAGS = $(CXXFLAGS_BASE) $(CXXFLAGS_$(PROFILE))
-LDLIBS   = $(LDLIBS_BASE) $(LDLIBS_$(PROFILE))
-
-MOD = $(MOD_NAME)$(shell python3-config --extension-suffix)
-BUILD_DIR = build/$(PROFILE)
-TESTS := $(addprefix $(BUILD_DIR)/,$(basename $(notdir $(wildcard tests/test_*))))
-
-ASAN = $(shell ldd $(MOD) | awk '$$1 ~ /^libasan/ { print $$1 }')
-
-# Environment variables passed to pytest when the address sanitizer is used.
-# Disable the leak sanitizer because CPython itself leaks memory.
-PYTEST_ASAN_ENV = LD_PRELOAD=$(ASAN) ASAN_OPTIONS=detect_leaks=0
-
-.PHONY: all lib pymod cpptest pytest test clean-mod clean-profile clean
+.PHONY: all lib pymod test cpptest pytest clean
 
 all: lib pymod
 
-lib: $(BUILD_DIR)/diffusion_maps.a
+lib:
+	$(MAKE) -f lib.mk PROFILE=$(PROFILE)
 
-$(BUILD_DIR)/diffusion_maps.a: $(BUILD_DIR)/diffusion_maps.o $(BUILD_DIR)/eig_solver.o
-	$(AR) $(ARFLAGS) $@ $^
-
-pymod: $(BUILD_DIR)/diffusion_maps.a
+pymod: lib
 	$(MAKE) -C pybind PROFILE=$(PROFILE)
-	cp pybind/build/$(PROFILE)/$(MOD) $(MOD)
+	cp build/$(PROFILE)/*.so .
 
-$(MOD): pymod
+test:
+	$(MAKE) cpptest
+	$(MAKE) pytest
 
-$(BUILD_DIR)/%.o: src/%.cpp | $(BUILD_DIR)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -fPIC -MMD -MF $(BUILD_DIR)/$*.d -o $@
+cpptest:
+	$(MAKE) lib PROFILE=TEST
+	$(MAKE) -C tests PROFILE=TEST
 
-$(BUILD_DIR):
-	mkdir -p $(BUILD_DIR)
-
-test: cpptest pytest
-
-cpptest: $(BUILD_DIR)/diffusion_maps.a
-	$(MAKE) -C tests test PROFILE=$(PROFILE)
+	# The tests for the parallel version crashes Criterion, so they are disabled
+	# for now.
+	#$(MAKE) lib PROFILE=TEST_PAR
+	#$(MAKE) -C tests PROFILE=TEST_PAR TEST_ENV="$(PAR_TEST_ENV)"
 
 pytest: $(MOD)
-	$(if $(findstring -lasan,$(LDLIBS)),$(PYTEST_ASAN_ENV)) python3 -m pytest
-
-clean-mod:
-	$(RM) $(MOD)
-
-clean-profile:
-	$(RM) -r $(BUILD_DIR) $(MOD)
-	$(MAKE) -C pybind clean-profile PROFILE=$(PROFILE)
-	$(MAKE) -C tests clean PROFILE=$(PROFILE)
+	# Run the tests for the parallel version only, in order to save time.
+	$(MAKE) pymod PROFILE=TEST_PAR
+	$(PAR_TEST_ENV) python3 -m pytest
 
 clean:
-	$(RM) -r build $(MOD)
-	$(MAKE) -C pybind clean PROFILE=$(PROFILE)
-	$(MAKE) -C tests clean PROFILE=$(PROFILE)
-
--include $(BUILD_DIR)/*.d
+	$(RM) -r build

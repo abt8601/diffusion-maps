@@ -22,7 +22,9 @@ jobs:
           sudo cp -r criterion-v2.3.3/* /usr/local/
 
       - name: Build module
-        run: make PROFILE=TEST
+        run: |
+          make PROFILE=TEST
+          make PROFILE=TEST_PAR
 
       - name: Test
-        run: LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib make test PROFILE=TEST
+        run: LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib make test
