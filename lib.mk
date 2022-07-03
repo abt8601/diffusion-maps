@@ -16,9 +16,9 @@ BUILD_DIR = build/$(PROFILE)
 
 .PHONY: all
 
-all: $(BUILD_DIR)/diffusion_maps.a
+all: $(BUILD_DIR)/libdiffusion_maps.a
 
-$(BUILD_DIR)/diffusion_maps.a: $(BUILD_DIR)/diffusion_maps.o $(BUILD_DIR)/eig_solver.o
+$(BUILD_DIR)/libdiffusion_maps.a: $(BUILD_DIR)/diffusion_maps.o $(BUILD_DIR)/eig_solver.o
 	$(AR) $(ARFLAGS) $@ $^
 
 $(BUILD_DIR)/%.o: src/%.cpp | $(BUILD_DIR)

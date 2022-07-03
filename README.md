@@ -59,7 +59,7 @@ To build everything, including the C++ library and the Python module:
 $ make PROFILE=<profile>
 ```
 If `PROFILE=<profile>` is omitted, then the profile defaults to `DEBUG`.
-The compiled C++ library is located at `build/<profile>/diffusion_maps.a`.
+The compiled C++ library is located at `build/<profile>/libdiffusion_maps.a`.
 
 Or, to build just the C++ library:
 ```shell
@@ -111,7 +111,7 @@ diffusion_maps::Matrix result = diffusion_maps::diffusion_maps(
     data, n_components, kernel, diffusion_time, rng);
 ```
 
-Statically link with the compiled C++ library `diffusion_maps.a`.
+Statically link with the compiled C++ library `libdiffusion_maps.a`.
 
 Please refer to [`tests/test_diffusion_maps.cpp`](tests/test_diffusion_maps.cpp)
 for a complete example.
