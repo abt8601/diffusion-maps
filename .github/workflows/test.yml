@@ -17,9 +17,9 @@ jobs:
 
       - name: Install Criterion
         run: |
-          wget https://github.com/Snaipe/Criterion/releases/download/v2.4.0/criterion-2.4.0-linux-x86_64.tar.xz
-          tar -Jxf criterion-2.4.0-linux-x86_64.tar.xz
-          sudo cp -r criterion-2.4.0/* /usr/local/
+          wget https://github.com/Snaipe/Criterion/releases/download/v2.4.1/criterion-2.4.1-linux-x86_64.tar.xz
+          tar -Jxf criterion-2.4.1-linux-x86_64.tar.xz
+          sudo cp -r criterion-2.4.1/* /usr/local/
 
       - name: Build module
         run: |
