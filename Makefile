@@ -41,6 +41,7 @@ cppdoc-doxygen: | build
 	doxygen Doxyfile
 
 pydoc: | build
+	$(MAKE) pymod PROFILE=DOC
 	pdoc --docformat numpy diffusion_maps -o build/pydoc
 
 build:

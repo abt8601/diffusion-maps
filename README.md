@@ -82,7 +82,7 @@ replace `test` in the command with `cpptest` or `pytest`.
 ## Basic Usage
 
 For more information about the API,
-please refer to the documentation that comes with the source code.
+please refer to the [API documentation](https://abt8601.github.io/diffusion-maps#api-doc).
 
 ### C++
 
