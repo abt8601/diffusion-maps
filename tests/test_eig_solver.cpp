@@ -19,10 +19,10 @@ Test(eig_solver, symmetric_power_method_simple) {
   // Dominant eigenvalue: 6
   // Dominant eigenvector: (1, -1, 1)
 
-  std::vector<diffusion_maps::SparseMatrix::Triple> triples = {
+  std::vector<diffusion_maps::SparseMatrix::Triplet> triplets = {
       {0, 0, 4},  {0, 1, -1}, {0, 2, 1},  {1, 0, -1}, {1, 1, 3},
       {1, 2, -2}, {2, 0, 1},  {2, 1, -2}, {2, 2, 3}};
-  diffusion_maps::SparseMatrix matrix(3, 3, triples);
+  diffusion_maps::SparseMatrix matrix(3, 3, triplets);
 
   const diffusion_maps::Vector x0 = {1, 0, 0};
   const double tol = 1e-10;
@@ -58,10 +58,10 @@ Test(eig_solver, eigsh_simple) {
   // Eigenvalues:  6          3           1
   // Eigenvectors: (1, -1, 1) (-2, -1, 1) (0, 1, 1)
 
-  std::vector<diffusion_maps::SparseMatrix::Triple> triples = {
+  std::vector<diffusion_maps::SparseMatrix::Triplet> triplets = {
       {0, 0, 4},  {0, 1, -1}, {0, 2, 1},  {1, 0, -1}, {1, 1, 3},
       {1, 2, -2}, {2, 0, 1},  {2, 1, -2}, {2, 2, 3}};
-  diffusion_maps::SparseMatrix matrix(3, 3, triples);
+  diffusion_maps::SparseMatrix matrix(3, 3, triplets);
 
   const unsigned k = 3;
   const double tol = 1e-9;

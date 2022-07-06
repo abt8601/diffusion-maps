@@ -5,22 +5,20 @@
 #include "diffusion_maps/internal/eig_solver.hpp"
 #include "diffusion_maps/sparse_matrix.hpp"
 
-/**
- * Computes the kernel matrix.
- *
- * @param data The data matrix where each row is a data point.
- * @param kernel The kernel function.
- * @param epsilon The value below which the output of the kernel would be
- * treated as zero.
- * @return The kernel matrix.
- */
+/// \brief Computes the kernel matrix.
+///
+/// \param[in] data The data matrix where each row is a data point.
+/// \param[in] kernel The kernel function.
+/// \param[in] epsilon The value below which the output of the kernel would be
+///                    treated as zero.
+/// \return The kernel matrix.
 static diffusion_maps::SparseMatrix compute_kernel_matrix(
     const diffusion_maps::Matrix &data,
     const std::function<double(const diffusion_maps::Vector &,
                                const diffusion_maps::Vector &)> &kernel,
     const double epsilon) {
   const std::size_t n_samples = data.n_rows();
-  std::vector<diffusion_maps::SparseMatrix::Triple> triples;
+  std::vector<diffusion_maps::SparseMatrix::Triplet> triplets;
 
 #ifdef PAR
 #pragma omp parallel for
@@ -33,25 +31,23 @@ static diffusion_maps::SparseMatrix compute_kernel_matrix(
 #pragma omp critical
 #endif
         {
-          triples.push_back({i, j, value});
+          triplets.push_back({i, j, value});
           if (i != j) {
-            triples.push_back({j, i, value});
+            triplets.push_back({j, i, value});
           }
         }
       }
     }
   }
 
-  return diffusion_maps::SparseMatrix(n_samples, n_samples, triples);
+  return diffusion_maps::SparseMatrix(n_samples, n_samples, triplets);
 }
 
-/**
- * Computes the "symmetrised" diffusion matrix from the kernel matrix. The
- * matrix is updated in-place.
- *
- * @param kernel_matrix The kernel matrix.
- * @return The inverse square root of the row sum of the kernel matrix.
- */
+/// \brief Computes the "symmetrised" diffusion matrix from the kernel matrix.
+///        The matrix is updated in-place.
+///
+/// \param[in,out] kernel_matrix The kernel matrix.
+/// \return The inverse square root of the row sum of the kernel matrix.
 static diffusion_maps::Vector compute_symmetrised_diffusion_matrix(
     diffusion_maps::SparseMatrix &kernel_matrix) {
   const diffusion_maps::Vector invsqrt_row_sum =

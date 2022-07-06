@@ -33,13 +33,13 @@ def diffusion_maps(
         The diffusion time.
     rng_seed : int, optional
         The seed for the random number generator.
-    kernel_epsilon : float
+    kernel_epsilon : float, default 1e-6
         The value below which the output of the kernel would be treated as zero.
-    eig_solver_tol : float
+    eig_solver_tol : float, default 1e-6
         The tolerance of the eigendecomposition solver.
-    eig_solver_max_iter : int
+    eig_solver_max_iter : int, default 100000
         The maximum number of iterations of the eigendecomposition solver.
-    kwargs : dict
+    **kwargs : dict, optional
         The keyword arguments of the kernel function.
 
     Returns
@@ -52,7 +52,7 @@ def diffusion_maps(
     ValueError
         If the data matrix is not a two-dimensional array.
     ValueError
-        If n_components is negative or greater than the number of data points
+        If `n_components` is negative or greater than the number of data points
         minus 1.
     ValueError
         If the kernel is not supported.
@@ -66,9 +66,9 @@ def diffusion_maps(
     The following kernels are supported:
 
     - 'gaussian'
-      The kernel parameter (gamma or sigma) can be specified as a keyword
-      argument. If both are not specified, gamma defaults to 1 / n_features. If
-      both are specified, raise a ValueError.
+      The kernel parameter (`gamma` or `sigma`) can be specified as a keyword
+      argument. If both are not specified, `gamma` defaults to
+      1 / ``n_features``. If both are specified, raise a `ValueError`.
     """
 
     # Check the dimensions.

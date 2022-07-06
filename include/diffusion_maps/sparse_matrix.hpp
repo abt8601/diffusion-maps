@@ -1,3 +1,7 @@
+/// \file
+///
+/// \brief Sparse matrix.
+
 #ifndef DIFFUSION_MAPS_SPARSE_MATRIX_HPP
 #define DIFFUSION_MAPS_SPARSE_MATRIX_HPP
 
@@ -12,101 +16,78 @@
 
 namespace diffusion_maps {
 
-/**
- * Sparse matrix in the CSR format.
- */
+/// Sparse matrix in the CSR format.
 class SparseMatrix {
 protected:
-  /**
-   * The number of rows.
-   */
+  /// The number of rows.
   std::size_t _n_rows;
-  /**
-   * The number of columns.
-   */
+  /// The number of columns.
   std::size_t _n_cols;
-  /**
-   * The data array of the matrix.
-   */
+  /// The data array of the matrix.
   std::unique_ptr<double[]> _data;
-  /**
-   * The column indices of each non-zero element.
-   */
+  /// The column indices of each non-zero element.
   std::unique_ptr<std::size_t[]> _col_ixs;
-  /**
-   * The indices of each row.
-   */
+  /// The indices of each row.
   std::unique_ptr<std::size_t[]> _row_ixs;
 
 public:
-  class Triple {
+  /// A non-zero element of a sparse matrix as a (i, j, value) triplet.
+  class Triplet {
   public:
-    /**
-     * The row index.
-     */
+    /// The row index.
     std::size_t row;
-    /**
-     * The column index.
-     */
+    /// The column index.
     std::size_t col;
-    /**
-     * The value.
-     */
+    /// The value.
     double value;
 
-    /**
-     * Less-than comparison operator. Compares the row and column indices.
-     *
-     * @param other The other triple.
-     * @return True if this triple is less than the other triple in the
-     * aforementioned order.
-     */
-    bool operator<(const Triple &other) const {
+    /// \brief Less-than comparison operator. Compares the row and column
+    ///        indices.
+    ///
+    /// \param[in] other The other triple.
+    /// \return True if this triple is less than the other triple in the
+    ///         aforementioned order.
+    bool operator<(const Triplet &other) const {
       return std::tie(row, col) < std::tie(other.row, other.col);
     }
   };
 
   // Constructors.
 
-  /**
-   * Constructs an empty 0×0 matrix.
-   */
+  /// Constructs an empty 0×0 matrix.
   SparseMatrix()
       : _n_rows(0), _n_cols(0), _data(nullptr), _col_ixs(nullptr),
         _row_ixs(nullptr) {}
 
-  /**
-   * Constructs a sparse matrix from a vector of triples.
-   *
-   * @param n_rows The number of rows.
-   * @param n_cols The number of columns.
-   * @param triples The vector of triples. Elements are sorted in-place.
-   */
+  /// \brief Constructs a sparse matrix from a vector of triplets.
+  ///
+  /// \param[in] n_rows The number of rows.
+  /// \param[in] n_cols The number of columns.
+  /// \param[in,out] triplets The vector of triplets. Elements are sorted
+  ///                         in-place.
   SparseMatrix(const std::size_t n_rows, const std::size_t n_cols,
-               std::vector<Triple> &triples)
+               std::vector<Triplet> &triplets)
       : _n_rows(n_rows), _n_cols(n_cols),
-        _data(std::make_unique<double[]>(triples.size())),
-        _col_ixs(std::make_unique<std::size_t[]>(triples.size())),
+        _data(std::make_unique<double[]>(triplets.size())),
+        _col_ixs(std::make_unique<std::size_t[]>(triplets.size())),
         _row_ixs(std::make_unique<std::size_t[]>(n_rows + 1)) {
-    // Sort the triples by row and column indices.
-    std::sort(triples.begin(), triples.end());
+    // Sort the triplets by row and column indices.
+    std::sort(triplets.begin(), triplets.end());
 
     // Fill the arrays.
     for (std::size_t ri = 0, ti = 0; ri < n_rows; ++ri) {
       _row_ixs[ri] = ti;
-      for (; ti < triples.size() && triples[ti].row == ri; ++ti) {
-        _col_ixs[ti] = triples[ti].col;
-        _data[ti] = triples[ti].value;
+      for (; ti < triplets.size() && triplets[ti].row == ri; ++ti) {
+        _col_ixs[ti] = triplets[ti].col;
+        _data[ti] = triplets[ti].value;
       }
     }
-    _row_ixs[n_rows] = triples.size();
+    _row_ixs[n_rows] = triplets.size();
   }
 
-  /**
-   * Copy constructor.
-   *
-   * @param other The sparse matrix to copy.
-   */
+  /// \brief Copy constructor.
+  ///
+  /// \param[in] other The sparse matrix to copy.
   SparseMatrix(const SparseMatrix &other)
       : _n_rows(other._n_rows), _n_cols(other._n_cols),
         _data(std::make_unique<double[]>(other.n_nz())),
@@ -117,11 +98,10 @@ public:
     std::copy_n(other._row_ixs.get(), other._n_rows + 1, _row_ixs.get());
   }
 
-  /**
-   * Move constructor. The moved-from matrix is set to an empty 0×0 matrix.
-   *
-   * @param other The sparse matrix to move.
-   */
+  /// \brief Move constructor. The moved-from matrix is set to an empty 0×0
+  ///        matrix.
+  ///
+  /// \param[in,out] other The sparse matrix to move.
   SparseMatrix(SparseMatrix &&other) noexcept
       : _n_rows(other._n_rows), _n_cols(other._n_cols),
         _data(std::move(other._data)), _col_ixs(std::move(other._col_ixs)),
@@ -132,19 +112,15 @@ public:
 
   // Destructor.
 
-  /**
-   * Destructor.
-   */
+  /// Destructor.
   virtual ~SparseMatrix() = default;
 
   // Assignment operators.
 
-  /**
-   * Copy assignment operator.
-   *
-   * @param other The sparse matrix to copy.
-   * @return A reference to this sparse matrix.
-   */
+  /// \brief Copy assignment operator.
+  ///
+  /// \param[in] other The sparse matrix to copy.
+  /// \return A reference to this sparse matrix.
   SparseMatrix &operator=(const SparseMatrix &other) {
     if (this == &other)
       return *this;
@@ -162,13 +138,11 @@ public:
     return *this;
   }
 
-  /**
-   * Move assignment operator. The moved-from matrix is set to an empty 0×0
-   * matrix.
-   *
-   * @param other The sparse matrix to move.
-   * @return A reference to this sparse matrix.
-   */
+  /// \brief Move assignment operator. The moved-from matrix is set to an empty
+  ///        0×0 matrix.
+  ///
+  /// \param[in,out] other The sparse matrix to move.
+  /// \return A reference to this sparse matrix.
   SparseMatrix &operator=(SparseMatrix &&other) {
     if (this == &other)
       return *this;
@@ -187,50 +161,34 @@ public:
 
   // Accessors.
 
-  /**
-   * The number of rows.
-   */
+  /// The number of rows.
   std::size_t n_rows() const { return _n_rows; }
 
-  /**
-   * The number of columns.
-   */
+  /// The number of columns.
   std::size_t n_cols() const { return _n_cols; }
 
-  /**
-   * The number of non-zero elements.
-   */
+  /// The number of non-zero elements.
   std::size_t n_nz() const { return _row_ixs[_n_rows]; }
 
-  /**
-   * The data array.
-   */
+  /// The data array.
   double *data() { return _data.get(); }
 
-  /**
-   * The data array.
-   */
+  /// The data array.
   const double *data() const { return _data.get(); }
 
-  /**
-   * The column indices array.
-   */
+  /// The column indices array.
   const std::size_t *col_ixs() const { return _col_ixs.get(); }
 
-  /**
-   * The row indices array.
-   */
+  /// The row indices array.
   const std::size_t *row_ixs() const { return _row_ixs.get(); }
 
   // Matrix operations.
 
-  /**
-   * Matrix-vector multiplication.
-   *
-   * @param v The vector to multiply.
-   * @return The result of the multiplication.
-   * @exception std::invalid_argument If the dimensions are incompatible.
-   */
+  /// \brief Matrix-vector multiplication.
+  ///
+  /// \param[in] v The vector to multiply.
+  /// \return The result of the multiplication.
+  /// \exception std::invalid_argument If the dimensions are incompatible.
   Vector operator*(const Vector &v) const {
     if (_n_cols != v.size())
       throw std::invalid_argument("incompatible dimensions");
